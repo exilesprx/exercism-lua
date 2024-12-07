@@ -1,0 +1,31 @@
+name: Test exercises
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Lua
+        uses: leafo/setup-lua@v1
+        with:
+          lua-version: "5.1"
+          luarocks: true
+
+      - name: Install Dependencies
+        run: |
+          luarocks install busted
+
+      - name: Run Tests
+        run: |
+          for dir in */; do
+            echo "Running tests in $dir"
+            (cd "$dir" && busted || exit 1)
+          done
